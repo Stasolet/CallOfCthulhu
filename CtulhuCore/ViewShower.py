@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QComboBox, QLineEdit, QSizePolicy
+from PyQt5.QtWidgets import QComboBox, QSizePolicy
 
-from TableShower import TableShower, TableRecordAdder, TableInfoChanger
+from CtulhuCore.TableShower import TableShower, TableRecordAdder, TableInfoChanger
 
 
 class ViewShower(TableShower):
