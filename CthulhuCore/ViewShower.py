@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QComboBox, QSizePolicy
 
-from CtulhuCore.TableShower import TableShower, TableRecordAdder, TableInfoChanger
+from CthulhuCore.TableShower import TableShower, TableRecordAdder, TableInfoChanger
 
 
 class ViewShower(TableShower):

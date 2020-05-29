@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QScrollArea, QWidget, QHBoxLayout, QVBoxLayout,\
     QLabel, QLineEdit, QPushButton, QGridLayout, QSizePolicy, QRadioButton, QButtonGroup, QMessageBox
 
 
-from CtulhuCore.DbWrapper import db_wrapper
+from CthulhuCore.DbWrapper import db_wrapper
 
 
 class TableShower(QWidget):
