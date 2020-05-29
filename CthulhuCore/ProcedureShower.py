@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QLabel, QLineEdit, QComboBox, QSizePolicy
 
-from CtulhuCore.DbWrapper import db_wrapper
-from CtulhuCore.QueryResShower import QueryResShower
+from CthulhuCore.DbWrapper import db_wrapper
+from CthulhuCore.QueryResShower import QueryResShower
 
 
 class ProcedureShower(QWidget):
