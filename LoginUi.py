@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QHBoxLayout, QLineEdit, QPushButton
 
-from CtulhuCore.DbWrapper import db_wrapper
+from CthulhuCore.DbWrapper import db_wrapper
 from MainUi import MainUi
 
 
@@ -36,7 +36,7 @@ class LoginUi(QWidget):
             db_wrapper.connect(host="localhost",
                                user=self.log_edt.text(),
                                passwd=self.pas_edt.text(),
-                               database="пассажироперевозочная",
+                               database="cthulhudb",
                                use_pure=True)
         except Exception as err:
             msg = None
@@ -53,3 +53,4 @@ class LoginUi(QWidget):
         else:
             self.w.show()
             self.hide()
+

@@ -1,9 +1,8 @@
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout
-
-from AutoUi import AutoUi
-from DriverUi import DriverUi
-from OrdersUi import OrdersUi
-from PathUi import PathUi
+from WorkersUi import WorkersUi
+from DangerConfUi import DangerConfUi
+from ParamsUi import ParamsUi
+from MonitorUi import MonitorUi
 from StatisticUi import StatisticUi
 
 
@@ -14,24 +13,42 @@ class MainUi(QWidget):
 
         self.resize(500, 500)
 
-        self.drive_btn = QPushButton("Управление персоналом")
-        self.auto_btn = QPushButton("Управление автопарком")
-        self.orders_btn = QPushButton("Управление рейсами")
-        self.path_btn = QPushButton("Управлнение маршрутами")
+        self.workers_btn = QPushButton("Управление персоналом")
+        self.monitor_btn = QPushButton("Мониторинг рабочих")
+        self.danger_conf_btn = QPushButton("Категории вредности")
+        self.params_btn = QPushButton("Измеряемые параметры")
+
         self.statistic_btn = QPushButton("Статистика")
 
-        self.drive_btn.clicked.connect(lambda: self.slave_widgets.append(DriverUi()))
-        self.auto_btn.clicked.connect(lambda: self.slave_widgets.append(AutoUi()))
-        self.orders_btn.clicked.connect(lambda: self.slave_widgets.append(OrdersUi()))
-        self.path_btn.clicked.connect(lambda: self.slave_widgets.append(PathUi()))
+        self.workers_btn.clicked.connect(lambda: self.slave_widgets.append(WorkersUi()))
+        self.danger_conf_btn.clicked.connect(lambda: self.slave_widgets.append(DangerConfUi()))
+        self.monitor_btn.clicked.connect(lambda: self.slave_widgets.append(MonitorUi()))
+        self.params_btn.clicked.connect(lambda: self.slave_widgets.append(ParamsUi()))
+
         self.statistic_btn.clicked.connect(lambda: self.slave_widgets.append(StatisticUi()))
 
         self.bx = QVBoxLayout()
-        self.bx.addWidget(self.drive_btn)
-        self.bx.addWidget(self.auto_btn)
-        self.bx.addWidget(self.orders_btn)
-        self.bx.addWidget(self.path_btn)
+        self.bx.addWidget(self.workers_btn)
+        self.bx.addWidget(self.danger_conf_btn)
+        self.bx.addWidget(self.monitor_btn)
+        self.bx.addWidget(self.params_btn)
         self.bx.addWidget(self.statistic_btn)
 
         self.setLayout(self.bx)
+
+
+if __name__ == '__main__':
+    from CthulhuCore.DbWrapper import db_wrapper
+
+    db_wrapper.connect(host="localhost",
+                       user="1422",
+                       passwd="1422",
+                       database="cthulhudb",
+                       use_pure=True)
+    from PyQt5.QtWidgets import QApplication
+    import sys
+    app = QApplication(sys.argv)
+    w = MainUi()
+    w.show()
+    sys.exit((app.exec_()))
 
