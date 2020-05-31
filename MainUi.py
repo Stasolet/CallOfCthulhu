@@ -14,24 +14,24 @@ class MainUi(QWidget):
         self.resize(500, 500)
 
         self.workers_btn = QPushButton("Управление персоналом")
-        self.monitor_btn = QPushButton("Мониторинг рабочих")
-        self.danger_conf_btn = QPushButton("Категории вредности")
         self.params_btn = QPushButton("Измеряемые параметры")
+        self.danger_conf_btn = QPushButton("Категории вредности")
+        self.monitor_btn = QPushButton("Мониторинг рабочих")
 
         self.statistic_btn = QPushButton("Статистика")
 
         self.workers_btn.clicked.connect(lambda: self.slave_widgets.append(WorkersUi()))
         self.danger_conf_btn.clicked.connect(lambda: self.slave_widgets.append(DangerConfUi()))
-        self.monitor_btn.clicked.connect(lambda: self.slave_widgets.append(MonitorUi()))
         self.params_btn.clicked.connect(lambda: self.slave_widgets.append(ParamsUi()))
+        self.monitor_btn.clicked.connect(lambda: self.slave_widgets.append(MonitorUi()))
 
         self.statistic_btn.clicked.connect(lambda: self.slave_widgets.append(StatisticUi()))
 
         self.bx = QVBoxLayout()
         self.bx.addWidget(self.workers_btn)
         self.bx.addWidget(self.danger_conf_btn)
-        self.bx.addWidget(self.monitor_btn)
         self.bx.addWidget(self.params_btn)
+        self.bx.addWidget(self.monitor_btn)
         self.bx.addWidget(self.statistic_btn)
 
         self.setLayout(self.bx)
