@@ -20,11 +20,11 @@ class MplCanvas(FigureCanvasQTAgg):
 
 class WorkerMonitor(QWidget):
     """отображаются активные устройства и состояния рабочих"""
-    def __init__(self, work_id=1, strt=(2020, 5, 1, 8), end=(2020, 5,2, 16)):
+    def __init__(self, work_id, strt, end):
         super().__init__()
 
-        morn = datetime.datetime(*strt)
-        evn = datetime.datetime(*end)
+        morn = datetime.datetime.fromisoformat(strt)
+        evn = datetime.datetime.fromisoformat(end)
 
         qmorn = morn.strftime('%Y-%m-%d %H:%M:%S')
         qevn = evn.strftime('%Y-%m-%d %H:%M:%S')
@@ -41,10 +41,10 @@ class WorkerMonitor(QWidget):
         toolbar = NavigationToolbar(sc, self)
         i = 1
         for param_id, param_name in params:
-            qwe = db_wrapper.execute(f"""SELECT date_format(`время_измерения`, '%Y.%m.%H:%i'), avg(значение_параметра)  FROM cthulhudb.журнал_показаний  where (табельный_номер = {work_id})
+            qwe = db_wrapper.execute(f"""SELECT date_format(`время_измерения`, '%i'), avg(значение_параметра)  FROM cthulhudb.журнал_показаний  where (табельный_номер = {work_id})
                                      and (время_измерения between '{qmorn}' and '{qevn}')
                                      and код_параметра = {param_id}
-                                     group by date_format(`время_измерения`, '%Y.%m.%H:%i')""")
+                                     group by date_format(`время_измерения`, '%Y.%m.%d %H:%i')""")
 
             res = qwe.fetchall()
             data = pd.DataFrame(res, columns=["время_измерения", "значение_параметра"])
