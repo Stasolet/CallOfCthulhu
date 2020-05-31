@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QComboBox, QSizePolicy
+from PyQt5.QtWidgets import QComboBox, QSizePolicy, QMessageBox
 
 from CthulhuCore.TableShower import TableShower, TableRecordAdder, TableInfoChanger
 
@@ -10,10 +10,29 @@ class ViewShower(TableShower):
         self.data_source = data_source
 
     def del_record_quest(self, header, data):
-        _src = self.source
-        self.source = self.data_source
-        super().del_record_quest(header, data)
-        self.source = _src
+        qwe = set(self.key_fields)
+        i = 0
+        del_query = []
+        while qwe:
+            if header[i] in qwe:
+                del_query.append(f"`{header[i]}` = {data[i]}")
+                qwe.remove(header[i])
+            i += 1
+        del_query = ','.join(del_query)
+        del_d = QMessageBox()
+        del_d.setIcon(QMessageBox.Question)
+        del_d.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        del_d.setText(f"Удалить запись {del_query}")
+        dialog_res = del_d.exec()
+        if dialog_res == QMessageBox.Ok:
+            _src = self.source
+            self.source = self.data_source
+            self.db.execute(f"delete from {self.source} where {del_query}")
+            self.db.commit()
+            self.source = _src
+            self.content_update()
+
+        # self.content_update()
 
 
 class ViewInfoChanger(TableInfoChanger):
@@ -40,22 +59,23 @@ class ViewInfoChanger(TableInfoChanger):
         self.combo_config = self.combo_config_getter()
         self.source = parent.data_source
         self.combo_change_idx = {}  # структура для отображения данных комбобокса в значения атрибутов таблиы данных
-        for box_name in self.combo_config.keys():
-            self.combo_change_idx[box_name] = {}
-            self.old_data[self.combo_config[box_name][3]] = self.old_data[box_name]
-            cell = self.cell_index[box_name]
-            edit = cell.itemAt(1).widget()
-            edit.disconnect()
-            combo = QComboBox()
-            combo.addItem(edit.text())
-            edit.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
-            combo.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-            cell.addWidget(combo)
-            edit.editingFinished.connect(lambda c_name=box_name, c=combo, t=edit.text:
-                                         self.combo_update(c_name, c, t()))
-            combo.activated[str].connect(lambda text, c_name=box_name, cell_name=self.combo_config[box_name][3]:
-                                         self.changed_cells.__setitem__(cell_name, self.combo_change_idx[c_name][text]))
-            self.combo_update(box_name, combo, "")  # изначальное заполнение всеми возможными
+        if self.combo_config:
+            for box_name in self.combo_config.keys():
+                self.combo_change_idx[box_name] = {}
+                self.old_data[self.combo_config[box_name][3]] = self.old_data[box_name]
+                cell = self.cell_index[box_name]
+                edit = cell.itemAt(1).widget()
+                edit.disconnect()
+                combo = QComboBox()
+                combo.addItem(edit.text())
+                edit.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+                combo.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+                cell.addWidget(combo)
+                edit.editingFinished.connect(lambda c_name=box_name, c=combo, t=edit.text:
+                                             self.combo_update(c_name, c, t()))
+                combo.activated[str].connect(lambda text, c_name=box_name, cell_name=self.combo_config[box_name][3]:
+                                             self.changed_cells.__setitem__(cell_name, self.combo_change_idx[c_name][text]))
+                self.combo_update(box_name, combo, "")  # изначальное заполнение всеми возможными
 
     def combo_update(self, c_name: str, c: QComboBox, text: str):
         results = self.db.execute(f"""SELECT {self.combo_config[c_name][1]}
@@ -67,7 +87,8 @@ class ViewInfoChanger(TableInfoChanger):
             c.addItem(combo_text)
 
     def push_changes(self):
-        self.combo_pre_push()
+        if self.combo_config:
+            self.combo_pre_push()
         super().push_changes()
 
     def combo_pre_push(self):
@@ -83,7 +104,8 @@ class ViewRecordAdder(ViewInfoChanger):
     adder_push = TableRecordAdder.push_changes
 
     def push_changes(self):
-        self.combo_pre_push()
+        if self.combo_config:
+            self.combo_pre_push()
         self.adder_push()
 
     def __init__(self, header, parent: ViewShower):
